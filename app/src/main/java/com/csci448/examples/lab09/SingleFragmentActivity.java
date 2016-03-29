@@ -1,5 +1,7 @@
 package com.csci448.examples.lab09;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v4.app.Fragment;
@@ -33,6 +35,10 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
     protected int getLayoutResId() {
         Log.d( getTag(), "getLayoutResId() returning activity_fragment by default" );
         return R.layout.activity_fragment;
+    }
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, PhotoGalleryActivity.class);
     }
 
     @Override
