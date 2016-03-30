@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -54,6 +55,7 @@ public class PhotoGalleryFragment extends Fragment {
      * Our RecyclerView object to display the photos
      */
     private RecyclerView mPhotoRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     /**
      * The Adapter for our RecyclerView
      */
@@ -155,10 +157,22 @@ public class PhotoGalleryFragment extends Fragment {
         Log.d( TAG, "onCreateView() called" );
 
         View view = inflater.inflate( R.layout.fragment_photo_gallery, container, false);
-
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         mPhotoRecyclerView = (RecyclerView) view.findViewById( R.id.fragment_photo_gallery_recycler_view );
         mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         mPhotoAdapter = null;
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+               new FetchItemsTask().execute();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+
+
+        });
+
+
 
         setupAdapter();
 
@@ -182,7 +196,7 @@ public class PhotoGalleryFragment extends Fragment {
      * activity
      */
     private void setupAdapter() {
-        Log.d( TAG, "setupAdapter() called" );
+        Log.d(TAG, "setupAdapter() called");
 
         // check if the fragment is added to an activity
         if( isAdded() ) {
@@ -190,7 +204,6 @@ public class PhotoGalleryFragment extends Fragment {
             Log.d( TAG, "Created a new adapter" );
             mPhotoAdapter = new PhotoAdapter( mGalleryItems );
             mPhotoRecyclerView.setAdapter(new PhotoAdapter(mItems));
-            //mPhotoRecyclerView.setAdapter( mPhotoAdapter );
         } else if( !isAdded() ) {
             Log.d( TAG, "fragment not added to activity yet" );
         }
@@ -199,7 +212,7 @@ public class PhotoGalleryFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState ) {
         super.onActivityCreated( savedInstanceState );
-        Log.d( TAG, "onActivityCreated( Bundle ) called" );
+        Log.d(TAG, "onActivityCreated( Bundle ) called");
     }
 
     @Override
